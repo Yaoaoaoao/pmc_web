@@ -1,7 +1,9 @@
 import json
 
+
 def generate_entity(e):
-    return [e['duid'], e['entityType'], [[e['charStart'], e['charEnd']+1]]]
+    return [e['duid'], e['entityType'], [[e['charStart'], e['charEnd'] + 1]]]
+
 
 def convert(json):
     """ Return brat js object. """
@@ -9,8 +11,7 @@ def convert(json):
                'entities': [],
                'triggers': [],
                'relations': [],
-               'events':[]
-}
+               'events': []}
     for e in json['entity'].values():
         # Format: [${ID}, ${TYPE}, [[${START}, ${END}]]]
         if e['entityType'] != 'Trigger':
@@ -25,7 +26,7 @@ def convert(json):
                 arg1 = [a['role'], a['entity_duid']]
             elif a['role'] == 'Theme':
                 arg2 = [a['role'], a['entity_duid']]
-        
+
         args = []
         args.append(arg1 if arg1 is not None else [])
         args.append(arg2 if arg2 is not None else [])
@@ -39,8 +40,9 @@ def convert(json):
             event = [r['duid'], trigger, args]
             docData['events'].append(event)
         else:
-            # Format: [${ID}, ${TYPE}, [[${ARGNAME}, ${TARGET}], [${ARGNAME}, ${TARGET}]]]         
+            # Format: [${ID}, ${TYPE}, [[${ARGNAME}, ${TARGET}], [${ARGNAME},
+            #  ${TARGET}]]]         
             relation = [r['duid'], r['relationType'], args]
             docData['relations'].append(relation)
-        
+
     return docData
