@@ -24,8 +24,3 @@ class PMCRawBrat(Resource):
         return [convert(sec) for sec in data]
 
 
-def add_rest_url(api):
-    api.add_resource(PMCTextJson, '/text/json/<string:pmcid>')
-    api.add_resource(PMCRawJson, '/raw/json/<string:pmcid>')
-    api.add_resource(PMCCleanedJson, '/cleaned/json/<string:pmcid>')
-    api.add_resource(PMCRawBrat, '/raw/brat/<string:pmcid>')

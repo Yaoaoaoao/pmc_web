@@ -11,23 +11,30 @@
     <script>
         var url = 'http://biotm2.cis.udel.edu:11000/';
         $(document).ready(function () {
-            var brat = ajax(url + "raw/brat/{{pmcid}}");
-            brat(data, 'result');
-            var json = ajax(url + "raw/json/{{pmcid}}");
-            $('#raw').text(json);
-        });
-
-        function ajax(url){
             $.ajax({
-                url: url,
+                url: url + "raw/brat/{{pmcid}}",
                 dataType: 'json'
             }).done(function (data) {
                 console.log(data);
-                return data;
+                brat(data[0], 'brat');;
             });
-        }
+
+	    $.ajax({
+                url: url + "raw/json/{{pmcid}}",
+                dataType: 'json'
+            }).done(function (data) {
+                console.log(data);
+	var tr;
+	$.each(data[0]['entity'], function(k, e){
+	    tr = $('<tr/>');
+	    tr.append("<td>" + e['duid'] + "</td>");
+	    tr.append("<td>" + e['entityText'] + "</td>");
+	    $('#raw').append(tr);
+	});
+        });
+    });
         
-        function brat(data) {
+        function brat(data, id) {
             var bratLocation = "{{ url_for('static', filename='') }}";
             head.js(
                     // External libraries
@@ -101,6 +108,7 @@
 <body>
 {{pmcid}}
 <div id='brat'></div>
-<div id='raw'></div>
+<br/><br/>
+<table id='raw'></table>
 </body>
 </html>
