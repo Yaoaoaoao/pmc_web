@@ -1,47 +1,42 @@
-import json
+import mirtex
 
 
 def generate_entity(e):
+    # Format: [${ID}, ${TYPE}, [[${START}, ${END}]]]
     return [e['duid'], e['entityType'], [[e['charStart'], e['charEnd'] + 1]]]
 
 
 def convert(json):
     """ Return brat js object. """
-    docData = {'text': json['text'],
-               'entities': [],
-               'triggers': [],
-               'relations': [],
-               'events': []}
+    docData = {
+        'docId': json['docId'],
+        'text': json['text'],
+        'entities': [], 
+        'triggers': [], 
+        'relations': [], 
+        'events': []}
+
     for e in json['entity'].values():
-        # Format: [${ID}, ${TYPE}, [[${START}, ${END}]]]
-        if e['entityType'] != 'Trigger':
-            docData['entities'].append(generate_entity(e))
+        if e['entityType'] == 'Trigger':
+            continue
+        docData['entities'].append(generate_entity(e))
 
     for r in json['relation'].values():
-        trigger, arg1, arg2 = None, None, None
-        for a in r['argument']:
-            if a['role'] == 'Trigger':
-                trigger = a['entity_duid']
-            elif a['role'] == 'Agent':
-                arg1 = [a['role'], a['entity_duid']]
-            elif a['role'] == 'Theme':
-                arg2 = [a['role'], a['entity_duid']]
+        trigger_id, args = None, None
+        if r['source'] == 'miRTex':
+            trigger_id, args = mirtex.relation(r)
 
-        args = []
-        args.append(arg1 if arg1 is not None else [])
-        args.append(arg2 if arg2 is not None else [])
-
-        if trigger is not None:
-            entity = generate_entity(json['entity'][trigger])
+        if trigger_id is not None:
+            entity = generate_entity(json['entity'][trigger_id])
+            # Change trigger name to relationType.
             entity[1] = r['relationType']
             docData['triggers'].append(entity)
 
             # Format: [${ID}, ${TRIGGER}, [[${ARGTYPE}, ${ARGID}], ...]]
-            event = [r['duid'], trigger, args]
+            event = [r['duid'], trigger_id, args]
             docData['events'].append(event)
         else:
-            # Format: [${ID}, ${TYPE}, [[${ARGNAME}, ${TARGET}], [${ARGNAME},
-            #  ${TARGET}]]]         
+            # Format: [${ID}, ${TYPE}, [[${ARGNAME}, ${TARGET}], ...]]
             relation = [r['duid'], r['relationType'], args]
             docData['relations'].append(relation)
 

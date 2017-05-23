@@ -9,7 +9,7 @@ api = Api(app)
 
 @app.route('/inspect/<string:pmcid>')
 def index(pmcid):
-    return render_template('raw.html', pmcid=pmcid)
+    return render_template('index.html', pmcid=pmcid)
 
 api.add_resource(PMCTextJson, '/text/json/<string:pmcid>')
 api.add_resource(PMCRawJson, '/raw/json/<string:pmcid>')
