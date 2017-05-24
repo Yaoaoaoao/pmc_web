@@ -1,4 +1,4 @@
-def relation(r):
+def brat_relation(r):
     trigger_id, arg1, arg2 = None, None, None
     for a in r['argument']:
         if a['role'] == 'Trigger':
@@ -11,5 +11,5 @@ def relation(r):
     args = []
     args.append(arg1 if arg1 is not None else [])
     args.append(arg2 if arg2 is not None else [])
-    
+
     return trigger_id, args

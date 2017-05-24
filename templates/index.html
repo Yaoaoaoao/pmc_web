@@ -51,22 +51,22 @@
 
             render() {
                 return (
-                        <div>
-                            {this.state.data.map(block => {
-                                return (
-                                        <div key={block.docId}>
-                                            <PMCText
-                                                    data={block}
-                                                    selectedRow={this.state.selectedRow}/>
-                                            <JsonTable
-                                                    docId={block.docId}
-                                                    data={block}
-                                                    handleClick={this.handleClick}/>
-                                            <Brat id="brat" />
-                                        </div>
-                                )
-                            })}
-                        </div>
+                    <div>
+                        {this.state.data.map(block => {
+                            return (
+                                <div key={block.docId}>
+                                    <PMCText
+                                            data={block}
+                                            selectedRow={this.state.selectedRow}/>
+                                    <JsonTable
+                                            docId={block.docId}
+                                            data={block}
+                                            handleClick={this.handleClick}/>
+                                    <Brat id="brat"/>
+                                </div>
+                            )
+                        })}
+                    </div>
                 );
             }
         }
@@ -98,7 +98,7 @@
                     selectedRow: null
                 };
             }
-            
+
             handleClick(id) {
                 this.props.handleClick(id);
                 this.setState({
@@ -106,7 +106,7 @@
                 });
             }
 
-            
+
             render() {
                 return (
                         <table className="table table-border ">
@@ -114,7 +114,7 @@
                                 {Object.keys(this.props.data).map((id) => {
                                     let entry = this.props.data[id];
                                     return (
-                                            <tr key={id} 
+                                            <tr key={id}
                                                 onClick={() => this.handleClick(id)}
                                                 className={this.state.selectedRow == id ? 'highlight' : ''}>
                                                 <td>{entry.duid}</td>
@@ -127,7 +127,7 @@
                 );
             }
         }
-        
+
         class PMCText extends React.Component {
             constructor(...args) {
                 super(...args);
@@ -144,6 +144,7 @@
                     start: this.props.data.text
                 })
             }
+
             componentDidUpdate() {
                 let selectedRow = this.props.selectedRow;
                 if (selectedRow && this.state.selectedRow != selectedRow) {
@@ -186,19 +187,22 @@
             }
         }
 
+        class Cytoscape extends React.Component {}
+        
         ReactDOM.render(
                 <RawDataContainer/>, document.getElementById('example')
         );
     </script>
 
 </head>
-<style> 
+<style>
     body {
-        padding: 2% 10% ;
+        padding: 2% 5%;
     }
+
     .highlight {
         background-color: yellow ! important;
-    } 
+    }
 </style>
 <body>
 <div id='result'></div>

@@ -24,7 +24,8 @@ def convert(json):
     for r in json['relation'].values():
         trigger_id, args = None, None
         if r['source'] == 'miRTex':
-            trigger_id, args = mirtex.relation(r)
+            trigger_id, args = mirtex.brat_relation(r)
+            print trigger_id
 
         if trigger_id is not None:
             entity = generate_entity(json['entity'][trigger_id])
