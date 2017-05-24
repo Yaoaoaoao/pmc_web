@@ -5,6 +5,9 @@ from rest import *
 
 app = Flask(__name__)
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0 #TODO: TEMP
+app.config['RESTFUL_JSON'] = {
+    'ensure_ascii': False
+}
 api = Api(app)
 
 
