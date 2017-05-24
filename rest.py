@@ -22,5 +22,3 @@ class PMCRawBrat(Resource):
     def get(self, pmcid):
         data = get_result('raw', pmcid)
         return [convert(sec) for sec in data]
-
-

@@ -1,5 +1,7 @@
 function brat(data, id) {
-    var bratLocation = "{{ url_for('static', filename='') }}";
+    // var bratLocation = "{{ url_for('static', filename='') }}";
+    var bratLocation = "/static/";
+    console.log(bratLocation);
     head.js(
         // External libraries
         bratLocation + 'client/lib/jquery.min.js',
@@ -63,7 +65,7 @@ function brat(data, id) {
             data,
             // Array containing locations of the visualisation fonts
             // webFontURLs 
-            []
+            webFontURLs
         );
     });
 }

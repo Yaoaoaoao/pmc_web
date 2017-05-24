@@ -29,4 +29,5 @@
 
 def get_result(db, pmcid):
     import test
+    test.TEST_JSON[0]['text'] = test.TEST_JSON[0]['text'].encode('utf-8')
     return test.TEST_JSON

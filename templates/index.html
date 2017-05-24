@@ -1,67 +1,26 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="UTF-8">
     <!-- React -->
     <script src="https://unpkg.com/react@15/dist/react.js"></script>
     <script src="https://unpkg.com/react-dom@15/dist/react-dom.js"></script>
     <script src="{{ url_for('static', filename='babel.min.js') }}"></script>
-    <link rel="stylesheet" 
-          href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" 
-          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" 
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet"
+          href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
           crossorigin="anonymous">
+
+    <!-- Brat -->
+    <link rel="stylesheet" type="text/css"
+          href="{{ url_for('static', filename='style-vis.css') }}"/>
+    <script src="{{ url_for('static', filename='client/lib/head.load.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='brat.js') }}?v=1"></script>
+
     <script type="text/jsx">
         let url = 'http://0.0.0.0:11000/';
-        class JsonTableEntity extends React.Component {
-            render() {
-                return (
-                    <table className="table table-border table-hover">
-                        <tbody>
-                            {Object.values(this.props.entities).map((entity, idx) => {
-                                return (
-                                    <tr key={idx}>
-                                        <td>{entity.duid}</td>
-                                        <td>{entity.entityText}</td>
-                                        <td>{JSON.stringify(entity)}</td>
-                                    </tr>
-                                );
-                                })
-                            }
-                    </tbody></table>
-                );
-            }
-        }
-
-        class JsonTableRelation extends React.Component {
-            render() {
-                return (
-                    <table className="table table-border table-hover">
-                        <tbody>
-                            {Object.values(this.props.relations).map((rel, idx) => {
-                                return (
-                                        <tr key={idx}>
-                                            <td>{rel.duid}</td>
-                                            <td>{JSON.stringify(rel)}</td>
-                                        </tr>
-                                );
-                            })
-                            }
-                        </tbody></table>
-                );
-            }
-        }
-        
-        class JsonTable extends React.Component {
-            render() {
-                return (
-                    <div>
-                        <h3> Entities </h3>
-                        <JsonTableEntity entities={this.props.data.entity} /> 
-                        <h3> Relations </h3>
-                        <JsonTableRelation relations={this.props.data.relation} /> 
-                    </div>
-                );
-            }
-        }
 
         class RawDataContainer extends React.Component {
             constructor(...args) {
@@ -69,6 +28,9 @@
                 this.state = {
                     data: []
                 };
+
+                // This binding is necessary to make `this` work in the callback
+                this.handleClick = this.handleClick.bind(this);
             }
 
             componentDidMount() {
@@ -81,29 +43,145 @@
                 });
             }
 
+            handleClick(rowIndex) {
+                this.setState({
+                    selectedRow: rowIndex
+                });
+            }
+
             render() {
                 return (
-                    <div>
-                        {this.state.data.map(block => {
-                            return (<JsonTable key={block.docId}
-                                               docId={block.docId}
-                                               data={block}/>)
-                        })}
-                    </div>
+                        <div>
+                            {this.state.data.map(block => {
+                                return (
+                                        <div key={block.docId}>
+                                            <PMCText
+                                                    data={block}
+                                                    selectedRow={this.state.selectedRow}/>
+                                            <JsonTable
+                                                    docId={block.docId}
+                                                    data={block}
+                                                    handleClick={this.handleClick}/>
+                                        </div>
+                                )
+                            })}
+                        </div>
                 );
             }
         }
 
+        class JsonTable extends React.Component {
+            render() {
+                return (
+                        <div>
+                            <h3>Entity Table</h3>
+                            <JsonTableEntry
+                                    data={this.props.data.entity}
+                                    type="entity"
+                                    handleClick={this.props.handleClick}/>
+                            <h3>Relation Table</h3>
+                            <JsonTableEntry
+                                    data={this.props.data.relation}
+                                    type="relation"
+                            />
+                        </div>
+                );
+            }
+        }
+
+        class JsonTableEntry extends React.Component {
+            handleClick(e) {
+                this.props.handleClick(e);
+            }
+
+            render() {
+                return (
+                        <table className="table table-border table-hover">
+                            <tbody>
+                                {Object.keys(this.props.data).map((id) => {
+                                    let entry = this.props.data[id];
+                                    return (
+                                            <tr key={id}
+                                                onClick={() => this.handleClick(id)}>
+                                                <td>{entry.duid}</td>
+                                                <td>{JSON.stringify(entry)}</td>
+                                            </tr> );
+                                })
+                                }
+                            </tbody>
+                        </table>
+                );
+            }
+        }
+
+        class PMCText extends React.Component {
+            constructor(...args) {
+                super(...args);
+                this.state = {
+                    start: '',
+                    highligh: '',
+                    end: ''
+                };
+            }
+
+            componentDidMount() {
+                this.setState({
+                    start: this.props.data.text
+                })
+            }
+            componentDidUpdate() {
+                let selectedRow = this.props.selectedRow;
+                if (selectedRow) {
+                    let entity = this.props.data.entity[selectedRow];
+                    let text = this.props.data.text;
+                    this.setState({
+                        start: text.slice(0, entity.charStart),
+                        highlight: text.slice(entity.charStart, entity.charEnd + 1),
+                        end: text.slice(entity.charEnd + 1)
+                    })
+                }
+            }
+
+            render() {
+                return (
+                        <div>
+                            <h1>{this.state.highlight}</h1>
+                            <p>{this.state.start}
+                                <span className="highlight">{this.state.highlight}</span>
+                                {this.state.end}
+                            </p>
+                        </div>
+                )
+            }
+        }
+
+        class Brat extends React.Component {
+            componentDidMount() {
+                fetch(url + "raw/brat/{{pmcid}}").then(response => {
+                    response.json().then(data => {
+                        brat(data[0], this.props.id)
+                    });
+                });
+            }
+
+            render() {
+                return (
+                        <div id={this.props.id}></div>
+                );
+            }
+        }
 
         ReactDOM.render(
-                <RawDataContainer/>,
-                document.getElementById('example')
+                <RawDataContainer/>, document.getElementById('example')
         );
     </script>
 
 </head>
+<style> .highlight {
+    background-color: yellow;
+} </style>
 <body>
-<div id="example"></div>
 <div id='result'></div>
+<div id="example"></div>
 </body>
 </html>
