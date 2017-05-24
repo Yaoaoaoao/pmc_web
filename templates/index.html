@@ -62,6 +62,7 @@
                                                     docId={block.docId}
                                                     data={block}
                                                     handleClick={this.handleClick}/>
+                                            <Brat id="brat" />
                                         </div>
                                 )
                             })}
@@ -83,6 +84,7 @@
                             <JsonTableEntry
                                     data={this.props.data.relation}
                                     type="relation"
+                                    handleClick={this.props.handleClick}
                             />
                         </div>
                 );
@@ -90,19 +92,31 @@
         }
 
         class JsonTableEntry extends React.Component {
-            handleClick(e) {
-                this.props.handleClick(e);
+            constructor(...args) {
+                super(...args);
+                this.state = {
+                    selectedRow: null
+                };
+            }
+            
+            handleClick(id) {
+                this.props.handleClick(id);
+                this.setState({
+                    selectedRow: id
+                });
             }
 
+            
             render() {
                 return (
-                        <table className="table table-border table-hover">
+                        <table className="table table-border ">
                             <tbody>
                                 {Object.keys(this.props.data).map((id) => {
                                     let entry = this.props.data[id];
                                     return (
-                                            <tr key={id}
-                                                onClick={() => this.handleClick(id)}>
+                                            <tr key={id} 
+                                                onClick={() => this.handleClick(id)}
+                                                className={this.state.selectedRow == id ? 'highlight' : ''}>
                                                 <td>{entry.duid}</td>
                                                 <td>{JSON.stringify(entry)}</td>
                                             </tr> );
@@ -113,11 +127,12 @@
                 );
             }
         }
-
+        
         class PMCText extends React.Component {
             constructor(...args) {
                 super(...args);
                 this.state = {
+                    selectedRow: null,
                     start: '',
                     highligh: '',
                     end: ''
@@ -131,10 +146,11 @@
             }
             componentDidUpdate() {
                 let selectedRow = this.props.selectedRow;
-                if (selectedRow) {
+                if (selectedRow && this.state.selectedRow != selectedRow) {
                     let entity = this.props.data.entity[selectedRow];
                     let text = this.props.data.text;
                     this.setState({
+                        selectedRow: selectedRow,
                         start: text.slice(0, entity.charStart),
                         highlight: text.slice(entity.charStart, entity.charEnd + 1),
                         end: text.slice(entity.charEnd + 1)
@@ -145,7 +161,6 @@
             render() {
                 return (
                         <div>
-                            <h1>{this.state.highlight}</h1>
                             <p>{this.state.start}
                                 <span className="highlight">{this.state.highlight}</span>
                                 {this.state.end}
@@ -177,9 +192,14 @@
     </script>
 
 </head>
-<style> .highlight {
-    background-color: yellow;
-} </style>
+<style> 
+    body {
+        padding: 2% 10% ;
+    }
+    .highlight {
+        background-color: yellow ! important;
+    } 
+</style>
 <body>
 <div id='result'></div>
 <div id="example"></div>
