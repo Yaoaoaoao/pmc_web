@@ -19,6 +19,7 @@ api.add_resource(PMCTextJson, '/text/json/<string:pmcid>')
 api.add_resource(PMCRawJson, '/raw/json/<string:pmcid>')
 api.add_resource(PMCCleanedJson, '/cleaned/json/<string:pmcid>')
 api.add_resource(PMCRawBrat, '/raw/brat/<string:pmcid>')
+api.add_resource(PMCRawCyto, '/raw/cyto/<string:pmcid>')
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=11000)

@@ -8,10 +8,7 @@
     <script src="{{ url_for('static', filename='babel.min.js') }}"></script>
 
     <!-- Bootstrap -->
-    <link rel="stylesheet"
-          href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
-          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
-          crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/latest/css/bootstrap.min.css">
 
     <!-- Brat -->
     <link rel="stylesheet" type="text/css"
@@ -19,193 +16,28 @@
     <script src="{{ url_for('static', filename='client/lib/head.load.min.js') }}"></script>
     <script src="{{ url_for('static', filename='brat.js') }}?v=1"></script>
 
-    <script type="text/jsx">
-        let url = 'http://0.0.0.0:11000/';
-
-        class RawDataContainer extends React.Component {
-            constructor(...args) {
-                super(...args);
-                this.state = {
-                    data: []
-                };
-
-                // This binding is necessary to make `this` work in the callback
-                this.handleClick = this.handleClick.bind(this);
-            }
-
-            componentDidMount() {
-                fetch(url + "raw/json/{{pmcid}}").then(response => {
-                    response.json().then(data => {
-                        this.setState({
-                            data: data
-                        });
-                    });
-                });
-            }
-
-            handleClick(rowIndex) {
-                this.setState({
-                    selectedRow: rowIndex
-                });
-            }
-
-            render() {
-                return (
-                    <div>
-                        {this.state.data.map(block => {
-                            return (
-                                <div key={block.docId}>
-                                    <PMCText
-                                            data={block}
-                                            selectedRow={this.state.selectedRow}/>
-                                    <JsonTable
-                                            docId={block.docId}
-                                            data={block}
-                                            handleClick={this.handleClick}/>
-                                    <Brat id="brat"/>
-                                </div>
-                            )
-                        })}
-                    </div>
-                );
-            }
-        }
-
-        class JsonTable extends React.Component {
-            render() {
-                return (
-                        <div>
-                            <h3>Entity Table</h3>
-                            <JsonTableEntry
-                                    data={this.props.data.entity}
-                                    type="entity"
-                                    handleClick={this.props.handleClick}/>
-                            <h3>Relation Table</h3>
-                            <JsonTableEntry
-                                    data={this.props.data.relation}
-                                    type="relation"
-                                    handleClick={this.props.handleClick}
-                            />
-                        </div>
-                );
-            }
-        }
-
-        class JsonTableEntry extends React.Component {
-            constructor(...args) {
-                super(...args);
-                this.state = {
-                    selectedRow: null
-                };
-            }
-
-            handleClick(id) {
-                this.props.handleClick(id);
-                this.setState({
-                    selectedRow: id
-                });
-            }
-
-
-            render() {
-                return (
-                        <table className="table table-border ">
-                            <tbody>
-                                {Object.keys(this.props.data).map((id) => {
-                                    let entry = this.props.data[id];
-                                    return (
-                                            <tr key={id}
-                                                onClick={() => this.handleClick(id)}
-                                                className={this.state.selectedRow == id ? 'highlight' : ''}>
-                                                <td>{entry.duid}</td>
-                                                <td>{JSON.stringify(entry)}</td>
-                                            </tr> );
-                                })
-                                }
-                            </tbody>
-                        </table>
-                );
-            }
-        }
-
-        class PMCText extends React.Component {
-            constructor(...args) {
-                super(...args);
-                this.state = {
-                    selectedRow: null,
-                    start: '',
-                    highligh: '',
-                    end: ''
-                };
-            }
-
-            componentDidMount() {
-                this.setState({
-                    start: this.props.data.text
-                })
-            }
-
-            componentDidUpdate() {
-                let selectedRow = this.props.selectedRow;
-                if (selectedRow && this.state.selectedRow != selectedRow) {
-                    let entity = this.props.data.entity[selectedRow];
-                    let text = this.props.data.text;
-                    this.setState({
-                        selectedRow: selectedRow,
-                        start: text.slice(0, entity.charStart),
-                        highlight: text.slice(entity.charStart, entity.charEnd + 1),
-                        end: text.slice(entity.charEnd + 1)
-                    })
-                }
-            }
-
-            render() {
-                return (
-                        <div>
-                            <p>{this.state.start}
-                                <span className="highlight">{this.state.highlight}</span>
-                                {this.state.end}
-                            </p>
-                        </div>
-                )
-            }
-        }
-
-        class Brat extends React.Component {
-            componentDidMount() {
-                fetch(url + "raw/brat/{{pmcid}}").then(response => {
-                    response.json().then(data => {
-                        brat(data[0], this.props.id)
-                    });
-                });
-            }
-
-            render() {
-                return (
-                        <div id={this.props.id}></div>
-                );
-            }
-        }
-
-        class Cytoscape extends React.Component {}
-        
-        ReactDOM.render(
-                <RawDataContainer/>, document.getElementById('example')
-        );
-    </script>
+    <!-- Cytoscape -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="{{ url_for('static', filename='cytoscape/cytoscape.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='cytoscape/func_cyto.js') }}"></script>
+    <script src="{{ url_for('static', filename='cytoscape/style.js') }}"></script>
+    <script src="{{ url_for('static', filename='cytoscape/cola.v3.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='cytoscape/cytoscape-cola.js') }}"></script>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='cytoscape/web_style.css') }}"/>
+    
+    <script type="text/jsx" src="{{ url_for('static', filename='app.jsx') }}"></script>
 
 </head>
 <style>
     body {
         padding: 2% 5%;
     }
-
     .highlight {
         background-color: yellow ! important;
     }
 </style>
 <body>
-<div id='result'></div>
 <div id="example"></div>
+<div id='result'></div>
 </body>
 </html>

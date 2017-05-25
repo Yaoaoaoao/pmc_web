@@ -1,6 +1,7 @@
 from flask_restful import Resource
 from pmc import *
-from brat import convert
+import brat
+import cyto
 
 
 class PMCTextJson(Resource):
@@ -21,4 +22,9 @@ class PMCCleanedJson(Resource):
 class PMCRawBrat(Resource):
     def get(self, pmcid):
         data = get_result('raw', pmcid)
-        return [convert(sec) for sec in data]
+        return [brat.convert(sec) for sec in data]
+
+class PMCRawCyto(Resource):
+    def get(self, pmcid):
+        data = get_result('raw', pmcid)
+        return [cyto.convert(sec) for sec in data]
