@@ -4,7 +4,7 @@ class RawDataContainer extends React.Component {
     constructor(...args) {
         super(...args);
         this.state = {
-            data: [],
+            data: null,
             selectedDuid: null,
             selectedType: null
         };
@@ -14,10 +14,10 @@ class RawDataContainer extends React.Component {
     }
 
     componentDidMount() {
-        fetch(url + "raw/json/{{pmcid}}").then(response => {
+        fetch(url + "raw/json/{{pmcid_id}}").then(response => {
             response.json().then(data => {
                 this.setState({
-                    data: data[0]
+                    data: data
                 });
             });
         });
@@ -31,6 +31,7 @@ class RawDataContainer extends React.Component {
     }
 
     render() {
+        if (this.state.data == null) return (<p></p>);
         let block = this.state.data;
         return (
             <div>
@@ -237,7 +238,6 @@ class PMCText extends React.Component {
             newSections.push(
                 {text: text.slice(lastIndex), highlight: false});
         
-        console.log(newSections);
         this.setState({
             selectedDuid: selectedDuid,
             sections: newSections
@@ -278,7 +278,7 @@ class Brat extends React.Component {
 
 class Cytoscape extends React.Component {
     componentDidMount() {
-        fetch(url + "raw/cyto/{{pmcid}}").then(response => {
+        fetch(url + "raw/cyto/{{pmcid_id}}").then(response => {
             response.json().then(data => {
                 cyto_init(data, this.props.id, this.props.updateState);
             });

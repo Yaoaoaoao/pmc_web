@@ -10,8 +10,8 @@ class PMCTextJson(Resource):
 
 
 class PMCRawJson(Resource):
-    def get(self, pmcid):
-        return get_result('raw', pmcid)
+    def get(self, pmcid_id):
+        return get_result('raw', pmcid_id)
 
 
 class PMCCleanedJson(Resource):
@@ -25,6 +25,6 @@ class PMCRawBrat(Resource):
         return [brat.convert(sec) for sec in data]
 
 class PMCRawCyto(Resource):
-    def get(self, pmcid):
-        data = get_result('raw', pmcid)
-        return [cyto.convert(sec) for sec in data]
+    def get(self, pmcid_id):
+        data = get_result('raw', pmcid_id)
+        return cyto.convert(data)
