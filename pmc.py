@@ -19,11 +19,12 @@ def get_text(db, pmcid):
     return list(cursor)
 
 
-def get_result(db, pmcid):
+def get_result(db, pmcid_id):
     if not db in DB:
-        return []
+        return None
 
-    pmcid_query = re.compile('^' + pmcid, re.IGNORECASE)
-    cursor = DB[db].find({'docId': pmcid_query}, {'_id': 0})
-    return list(cursor)
+    #pmcid_query = re.compile('^' + pmcid, re.IGNORECASE)
+    #cursor = DB[db].find({'docId': pmcid_query}, {'_id': 0})
+    cursor = DB[db].find_one({'docId': pmcid_id}, {'_id': 0})
+    return cursor
 

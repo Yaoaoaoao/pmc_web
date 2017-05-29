@@ -1,4 +1,4 @@
-let url = 'http://0.0.0.0:11000/';
+let url = 'http://biotm2.cis.udel.edu:11000/';
 
 class RawDataContainer extends React.Component {
     constructor(...args) {
@@ -14,7 +14,7 @@ class RawDataContainer extends React.Component {
     }
 
     componentDidMount() {
-        fetch(url + "raw/json/{{pmcid_id}}").then(response => {
+        fetch(url + "raw/json/" + pmcid_id).then(response => {
             response.json().then(data => {
                 this.setState({
                     data: data
@@ -31,7 +31,8 @@ class RawDataContainer extends React.Component {
     }
 
     render() {
-        if (this.state.data == null) return (<p></p>);
+    	   console.log(this.state.data);
+        if (this.state.data == null) return (<p> Empty </p>);
         let block = this.state.data;
         return (
             <div>
@@ -262,7 +263,7 @@ class PMCText extends React.Component {
 
 class Brat extends React.Component {
     componentDidMount() {
-        fetch(url + "raw/brat/{{pmcid}}").then(response => {
+        fetch(url + "raw/brat/" + pmc_id).then(response => {
             response.json().then(data => {
                 brat(data, this.props.id)
             });
@@ -278,7 +279,7 @@ class Brat extends React.Component {
 
 class Cytoscape extends React.Component {
     componentDidMount() {
-        fetch(url + "raw/cyto/{{pmcid_id}}").then(response => {
+        fetch(url + "raw/cyto/" + pmcid_id).then(response => {
             response.json().then(data => {
                 cyto_init(data, this.props.id, this.props.updateState);
             });
