@@ -19,7 +19,7 @@ def brat_relation(r):
     return trigger_id, args
 
 
-def cytoscape_relation(r):
+def cytoscape_relation_args(r):
     arg1, arg2 = None, None
     for a in r['argument']:
         if a['role'] == ROLE1:
@@ -27,4 +27,4 @@ def cytoscape_relation(r):
         elif a['role'] == ROLE2:
             arg2 = a['entity_duid']
 
-        return (arg1, arg2, r['relationType'])
+    return arg1, arg2

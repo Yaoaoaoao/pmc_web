@@ -14,10 +14,11 @@ def convert(data):
             NODES[duid].json = json.dumps(entity)
 
     for duid, relation in data['relation'].iteritems():
-        k = mirtex.cytoscape_relation(relation)
-        if k[0] not in NODES or k[1] not in NODES:
+        duid = relation['duid']
+        sn, tn = mirtex.cytoscape_relation_args(relation)
+        if sn not in NODES or tn not in NODES:
             continue
-        if Edge.add(k, EDGES):
-            EDGES[k].json = json.dumps(relation)
+        if Edge.add(duid, sn, tn, relation['relationType'], EDGES):
+            EDGES[duid].json = json.dumps(relation)
 
     return dump_network(NODES, EDGES)
