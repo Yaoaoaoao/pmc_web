@@ -1,4 +1,5 @@
-let url = 'http://biotm2.cis.udel.edu:11000/';
+let url = 'http://0.0.0.0:11000/';
+// let url = 'http://biotm2.cis.udel.edu:11000/';
 
 class RawDataContainer extends React.Component {
     constructor(...args) {
@@ -52,6 +53,7 @@ class RawDataContainer extends React.Component {
                         data={block}
                         selectedDuid={this.state.selectedDuid}
                         selectedType={this.state.selectedType}
+                        updateState={this.updateState}
                     />
                   
                     </div>
@@ -96,28 +98,6 @@ class JsonTable extends React.Component {
 }
 
 class JsonTableEntry extends React.Component {
-    constructor(...args) {
-        super(...args);
-        this.state = {
-            selectedRow: this.props.selectedDuid
-        };
-    }
-
-    updateState(id) {
-        this.props.updateState(id, this.props.type);
-        this.setState({
-            selectedRow: id
-        });
-    }
-
-    componentDidUpdate() {
-        if (this.state.selectedRow != this.props.selectedDuid) {
-            this.setState({
-                selectedRow: this.props.selectedDuid
-            });
-        }
-    }
-    
     render() {
         let data = this.props.data;
         if (this.props.type == 'entity') {
@@ -135,8 +115,8 @@ class JsonTableEntry extends React.Component {
                         let entry = data[id];
                         return (
                             <tr key={id}
-                                onClick={() => this.updateState(id, this.props.type)}
-                                className={this.state.selectedRow == id ? 'highlight' : ''}>
+                                onClick={() => this.props.updateState(id, this.props.type)}
+                                className={this.props.selectedDuid == id ? 'highlight' : ''}>
                                 <td>{entry.entityText}</td>
                                 <td>{entry.entityType}</td>
                                 <td>{entry.source}</td>
@@ -168,8 +148,8 @@ class JsonTableEntry extends React.Component {
                         });
                         return (
                             <tr key={id}
-                                onClick={() => this.updateState(id, this.props.type)}
-                                className={this.state.selectedRow == id ? 'highlight' : ''}>
+                                onClick={() => this.props.updateState(id, this.props.type)}
+                                className={this.props.selectedDuid == id ? 'highlight' : ''}>
                                 <td>{args.map((ele, idx) => {
                                     return <span key={idx}>{ele}<br/></span>
                                 })}</td>
@@ -198,62 +178,71 @@ class PMCText extends React.Component {
     }
 
     componentDidMount() {
-        this.setState({
-            sections: [{text: this.props.data.text, highlight: false}]
-        })
-    }
-
-    componentDidUpdate() {
-        let selectedDuid = this.props.selectedDuid;
-        if (!selectedDuid || this.state.selectedDuid == selectedDuid) 
-            return;
-        
         let data = this.props.data;
         let text = this.props.data.text;
-        var newSections = [], entities = [];
-        if (this.props.selectedType == 'entity'){
-            entities.push(data.entity[selectedDuid]);
-        }
-        else if (this.props.selectedType == 'relation'){
-            let relation = data.relation[selectedDuid];
-            entities = relation.argument.map((a) => {
-                let duid = a['entity_duid'];
-                return data.entity[duid];
-            }).sort((a, b) => {
-                return a.charStart - b.charStart;
-            });
-        }
-        else {
-            return
-        }
         
+        // Create entity: [rel1, rel2] mapping. 
+        var entityRelation = {};
+        Object.keys(data.entity).map((k) => { entityRelation[k] = []; });
+        Object.values(data.relation).map((relation) => {
+            relation.argument.map((a) => {
+                entityRelation[a['entity_duid']].push(relation['duid']); 
+            });
+        });
+        
+        var newSections = [];
         var lastIndex = 0;
-        entities.map((e) => {
+        Object.values(data.entity).sort((a, b) => {
+            return a.charStart - b.charStart;
+        }).map((e) => {
             newSections.push(
-                {text: text.slice(lastIndex, e.charStart), highlight: false});
+                {text: text.slice(lastIndex, e.charStart), entity_label: false});
             newSections.push(
-                {text: text.slice(e.charStart, e.charEnd + 1), highlight: true});
+                {text: text.slice(e.charStart, e.charEnd + 1), entity_label: true,
+                 id: e.duid, relations: entityRelation[e.duid]});
             lastIndex = e.charEnd + 1;
         });
         if (lastIndex <= text.length )
             newSections.push(
-                {text: text.slice(lastIndex), highlight: false});
-        
-        this.setState({
-            selectedDuid: selectedDuid,
-            sections: newSections
-        })
-    }
+                {text: text.slice(lastIndex), entity_label: false});
 
+        this.setState({
+            sections: newSections
+        });
+    }
+    
+    componentDidUpdate() {
+        if (this.props.selectedType == 'relation'){
+            let relation = this.props.data.relation[this.props.selectedDuid];
+            var entities = relation.argument.map((a) => {
+                    return a['entity_duid'];
+                });
+        }
+    }
+    
+    check_highlight(sec) {
+        if (this.props.selectedType == 'entity') {
+            return this.props.selectedDuid == sec.id;
+        }
+        else if (this.props.selectedType == 'relation') {
+            return sec.relations.indexOf(this.props.selectedDuid) > -1;
+        }
+    }
+    
     render() {
         return (
             <div>
                 <p>{this.state.sections.map((sec, idx) => {
-                    return (
-                        <span key={idx}
-                              className={sec.highlight ? 'highlight' : ''}>
-                                {sec.text}</span>
-                    )
+                    if (sec.entity_label) {
+                        return (
+                            <span key={idx}
+                                  className={this.check_highlight(sec) ? 'entity-label highlight': 'entity-label'}
+                                  onClick={() => {this.props.updateState(sec.id, 'entity')}}>
+                                  {sec.text}</span>
+                        )}
+                    else {return (
+                        <span key={idx}>{sec.text}</span>
+                    )}
                 })}
                 </p>
             </div>

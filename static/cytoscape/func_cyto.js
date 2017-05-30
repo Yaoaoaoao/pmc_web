@@ -23,7 +23,7 @@ function cyto_init(eleObj, id, test) {
     $('#' + id).cytoscape(options);
 
     // set mouse interactions
-    mouse_hover();
+    // mouse_hover();
     left_click(test);
 }
 
