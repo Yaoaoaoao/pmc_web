@@ -9,7 +9,7 @@ function cyto_init(eleObj, id, test) {
         zoomingEnabled: false,
         layout: {
             name: 'cola', 
-	        fit: true,
+	    fit: true,
             avoidOverlap: true,
             nodeSpacing: function( node ){ return 10; },
         },

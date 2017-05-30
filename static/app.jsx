@@ -1,5 +1,5 @@
-let url = 'http://0.0.0.0:11000/';
-// let url = 'http://biotm2.cis.udel.edu:11000/';
+// let url = 'http://0.0.0.0:11000/';
+let url = 'http://biotm2.cis.udel.edu:11000/';
 
 class RawDataContainer extends React.Component {
     constructor(...args) {
@@ -32,7 +32,6 @@ class RawDataContainer extends React.Component {
     }
 
     render() {
-    	   console.log(this.state.data);
         if (this.state.data == null) return (<p> Empty </p>);
         let block = this.state.data;
         return (
