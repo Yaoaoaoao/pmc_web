@@ -8,6 +8,8 @@ def convert(data):
     NODES, EDGES = {}, {}
 
     for duid, entity in data['entity'].iteritems():
+        if entity['entityType'] == 'Trigger':
+            continue
         if Node.add(duid, NODES):
             NODES[duid].Label = entity['entityText']
             NODES[duid].source = entity['source']
