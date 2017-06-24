@@ -15,7 +15,7 @@ class RawDataContainer extends React.Component {
     }
 
     componentDidMount() {
-        fetch(url + "raw/json/" + pmcid_id).then(response => {
+        fetch(url + query).then(response => {
             response.json().then(data => {
                 this.setState({
                     data: data
@@ -251,7 +251,7 @@ class PMCText extends React.Component {
 
 class Brat extends React.Component {
     componentDidMount() {
-        fetch(url + "raw/brat/" + pmcid_id).then(response => {
+        fetch(url + query +'brat/').then(response => {
             response.json().then(data => {
                 brat(data, this.props.id)
             });
@@ -267,7 +267,7 @@ class Brat extends React.Component {
 
 class Cytoscape extends React.Component {
     componentDidMount() {
-        fetch(url + "raw/cyto/" + pmcid_id).then(response => {
+        fetch(url + query +'cyto/').then(response => {
             response.json().then(data => {
                 cyto_init(data, this.props.id, this.props.updateState);
             });

@@ -4,30 +4,27 @@ from flask import render_template
 from rest import *
 
 app = Flask(__name__)
-app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0 #TODO: TEMP
+app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0  # TODO: TEMP
 app.config['RESTFUL_JSON'] = {
     'ensure_ascii': False
 }
 api = Api(app)
 
 
-@app.route('/inspect/<string:pmcid_id>')
-def index(pmcid_id):
-    return render_template('index.html', pmcid_id=pmcid_id)
-
-@app.route('/sec/<string:db>/<string:pmcid>')
-def seclist(db, pmcid):
-    sec = [i.get('docId') for i in get_section_list(db, pmcid)]
-    return render_template('seclist.html', data=sec)
-
-api.add_resource(PMCTextJson, '/text/json/<string:pmcid>')
-api.add_resource(PMCRawJson, '/raw/json/<string:pmcid_id>')
-api.add_resource(PMCCleanedJson, '/cleaned/json/<string:pmcid>')
-api.add_resource(PMCRawBrat, '/raw/brat/<string:pmcid_id>')
-api.add_resource(PMCRawCyto, '/raw/cyto/<string:pmcid_id>')
-api.add_resource(MongoJson, '/<string:db>/<string:collection>/<string:key>/<string:query>')
+@app.route('/inspect/<db>/<collection>/<key>/<value>')
+def index(db, collection, key, value):
+    return render_template('index.html',
+                           db=db, collection=collection, key=key, value=value)
 
 
+@app.route('/sec/<db>/<collection>/<pmcid>')
+def seclist(db, collection, pmcid):
+    return render_template('seclist.html',
+                           data=get_sections(db, collection, pmcid))
+
+
+api.add_resource(MongoJson, '/<db>/<collection>/<key>/<value>')
+api.add_resource(MongoJson, '/<db>/<collection>/<key>/<value>/<format>')
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=11000)

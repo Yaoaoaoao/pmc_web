@@ -1,34 +1,21 @@
 from flask_restful import Resource
-from pmc import *
+from pymongo_query import *
 import brat
 import cyto
 
 
-class PMCTextJson(Resource):
-    def get(self, pmcid):
-        return get_text('text', pmcid)
+def get_sections(db, collection, pmcid):
+    return [i.get('docId') for i in get_section_list(db, collection, pmcid)]
 
-
-class PMCRawJson(Resource):
-    def get(self, pmcid_id):
-        return get_result('raw', pmcid_id)
-
-
-class PMCCleanedJson(Resource):
-    def get(self, pmcid):
-        return {'pmcid': pmcid, 'type': 'CLEANED'}
-
-
-class PMCRawBrat(Resource):
-    def get(self, pmcid_id):
-        data = get_result('raw', pmcid_id)
-        return brat.convert(data)
-
-class PMCRawCyto(Resource):
-    def get(self, pmcid_id):
-        data = get_result('raw', pmcid_id)
-        return cyto.convert(data)
 
 class MongoJson(Resource):
-    def get(self, db, collection, key, query):
-        return get_data(db, collection, key, query)
+    def get(self, db, collection, key, value, format='json'):
+        data = get_data(db, collection, key, value)
+        if format == 'json':
+            return data
+        elif format == 'brat':
+            return brat.convert(data)
+        elif format == 'cyto':
+            return cyto.convert(data)
+        else:
+            return data
