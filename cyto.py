@@ -1,6 +1,6 @@
 from cytoscape import *
 import json
-import mirtex
+import tm
 
 
 def convert(data):
@@ -17,7 +17,10 @@ def convert(data):
 
     for duid, relation in data['relation'].iteritems():
         duid = relation['duid']
-        sn, tn = mirtex.cytoscape_relation_args(relation)
+        if relation['source'] == 'miRTex':
+            sn, tn = tm.mirtex.cytoscape_relation_args(relation)
+        # elif relation['source'] == 'RLIMS-P':
+        #     sn, tn = tm.rlims.cytoscape_relation_args(relation)
         if sn not in NODES or tn not in NODES:
             continue
         if Edge.add(duid, sn, tn, relation['relationType'], EDGES):
