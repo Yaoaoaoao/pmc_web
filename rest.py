@@ -20,11 +20,15 @@ class PMCCleanedJson(Resource):
 
 
 class PMCRawBrat(Resource):
-    def get(self, pmcid):
-        data = get_result('raw', pmcid)
-        return [brat.convert(sec) for sec in data]
+    def get(self, pmcid_id):
+        data = get_result('raw', pmcid_id)
+        return brat.convert(data)
 
 class PMCRawCyto(Resource):
     def get(self, pmcid_id):
         data = get_result('raw', pmcid_id)
         return cyto.convert(data)
+
+class MongoJson(Resource):
+    def get(self, db, collection, key, query):
+        return get_data(db, collection, key, query)

@@ -23,8 +23,9 @@ def seclist(db, pmcid):
 api.add_resource(PMCTextJson, '/text/json/<string:pmcid>')
 api.add_resource(PMCRawJson, '/raw/json/<string:pmcid_id>')
 api.add_resource(PMCCleanedJson, '/cleaned/json/<string:pmcid>')
-api.add_resource(PMCRawBrat, '/raw/brat/<string:pmcid>')
+api.add_resource(PMCRawBrat, '/raw/brat/<string:pmcid_id>')
 api.add_resource(PMCRawCyto, '/raw/cyto/<string:pmcid_id>')
+api.add_resource(MongoJson, '/<string:db>/<string:collection>/<string:key>/<string:query>')
 
 
 

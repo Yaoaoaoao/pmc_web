@@ -34,3 +34,6 @@ def get_result(db, pmcid_id):
     cursor = DB[db].find_one({'docId': pmcid_id}, {'_id': 0})
     return cursor
 
+def get_data(db, collection, key, query):
+    print db, collection, key, query
+    return client[db][collection].find_one({key: query}, {'_id': 0})

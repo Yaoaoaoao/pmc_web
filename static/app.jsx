@@ -63,7 +63,7 @@ class RawDataContainer extends React.Component {
                         selectedDuid={this.state.selectedDuid}
                         selectedType={this.state.selectedType}
                         updateState={this.updateState}/>
-                    {/* <Brat id="brat"/> */}
+                     {/* <Brat id="brat"/> */}
                 </div>
             </div>
         );
@@ -251,7 +251,7 @@ class PMCText extends React.Component {
 
 class Brat extends React.Component {
     componentDidMount() {
-        fetch(url + "raw/brat/" + pmc_id).then(response => {
+        fetch(url + "raw/brat/" + pmcid_id).then(response => {
             response.json().then(data => {
                 brat(data, this.props.id)
             });
