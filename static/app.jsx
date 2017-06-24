@@ -138,13 +138,13 @@ class JsonTableEntry extends React.Component {
                     <tbody>
                     {Object.keys(data).map((id) => {
                         let entry = data[id];
-                        let args = entry.argument.map((k) => {
+                        let args = entry.argument ? entry.argument.map((k) => {
                             let text = this.props.fullData.entity[k.entity_duid].entityText;
                             return k.role + ': ' + text;
-                        });
-                        let attr = entry.attribute.map((k) => { 
+                        }) : [];
+                        let attr = entry.attribute ? entry.attribute.map((k) => { 
                             return k.key + ': ' + k.value;
-                        });
+                        }) : [];
                         return (
                             <tr key={id}
                                 onClick={() => this.props.updateState(id, this.props.type)}
