@@ -17,6 +17,7 @@ def convert(data):
 
     for duid, relation in data['relation'].iteritems():
         duid = relation['duid']
+        sn, tn = None, None
         if relation['source'] == 'miRTex':
             sn, tn = tm.mirtex.cytoscape_relation_args(relation)
         # elif relation['source'] == 'RLIMS-P':
