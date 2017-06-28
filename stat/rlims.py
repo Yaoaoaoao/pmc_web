@@ -1,6 +1,7 @@
 from bson.code import Code
+from utils import *
 
-_MAPPER_RELATION_RLIMS = Code("""
+_MAPPER_RELATION_ARGS = Code("""
     function() {
         for (var i in this.relation) {
             if ('argument' in this.relation[i]) {
@@ -21,3 +22,8 @@ _MAPPER_RELATION_RLIMS = Code("""
         }
     }
 """)
+
+def run():
+    rlims = Stat('rlims', 'normalized')
+    rlims.basic_counts()
+    rlims.counter(_MAPPER_RELATION_ARGS, 'relation_args')
