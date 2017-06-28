@@ -1,4 +1,4 @@
-import mirtex
+from tm import mirtex
 
 
 def generate_entity(e):
