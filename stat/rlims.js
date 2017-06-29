@@ -7,7 +7,7 @@ const MAPPER_RELATION_ARGS = function() {
         if (!('argument' in this.relation[i]))
             return;
         // Substrate, site, kinase
-        var roles = [null, null, null];
+        var roles = Array(3).fill(null);
 	this.relation[i]['argument'].forEach((arg) => {
             var role = arg['role'];
 	    var suffix = normalized ? isNormalized(this.entity, arg['entity_duid']) : '';

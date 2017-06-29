@@ -46,5 +46,8 @@ Stat.prototype = {
 
 // Return "normalized" if the duid is normalized, otherwise null. 
 function isNormalized(entities, duid) {
-    return duid in entities && entities[duid]['entityId'].length > 0 ? '_normed' : '_not_normed';
+    if (duid in entities && 'entityId' in entities[duid] && entities[duid]['entityId'].length > 0)
+	return '_normed';
+    else 
+	return '_not_normed';
 }
