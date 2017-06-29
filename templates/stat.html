@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!-- React -->
+<script src="https://unpkg.com/react@15/dist/react.js"></script>
+<script src="https://unpkg.com/react-dom@15/dist/react-dom.js"></script>
+<script src="{{ url_for('static', filename='babel.min.js') }}"></script>
+
+<!-- Bootstrap -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/latest/css/bootstrap.min.css">
+<script>let url = 'http://biotm2.cis.udel.edu:11000/statData/{{db}}/{{collection}}/';</script>
+<script type="text/jsx" src="{{ url_for('static', filename='stat.jsx') }}"></script>
+<style>
+body {
+        padding: 2% 5%;
+}
+</style>
+</head>
+<body>
+<div id="result"></div>
+</body>
+</html>

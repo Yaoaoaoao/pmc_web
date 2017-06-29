@@ -23,6 +23,10 @@ def seclist(db, collection, pmcid):
                            db=db, collection=collection, key='docId', value=pmcid,
                            data=get_sections(db, collection, pmcid))
 
+@app.route('/stat/<db>/<collection>/')
+def statPage(db, collection):
+    return render_template('stat.html', db=db, collection=collection)
+
 
 @app.route('/relation/<db>/<roles>/<query>/')
 def relation_view(db, roles, query):
@@ -36,6 +40,8 @@ def relation_view(db, roles, query):
 
 api.add_resource(MongoJson, '/<db>/<collection>/<key>/<value>/', 
                             '/<db>/<collection>/<key>/<value>/<format>/')
+api.add_resource(StatJson, '/statData/<db>/<collection>/',
+                           '/statData/<db>/<collection>/<name>/')
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=11001)
