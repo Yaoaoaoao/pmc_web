@@ -28,7 +28,7 @@ class StatDataContainer extends React.Component {
 			<table><tbody> 
 			{this.state.data[k].map((item, idx) => (
 				<tr key={idx}>
-				    <td>{JSON.stringify(item._id.name)}</td>
+				    <td>{item._id}</td>
 				    <td className="pull-right">{item.value}</td>
 				</tr>	
 			))}

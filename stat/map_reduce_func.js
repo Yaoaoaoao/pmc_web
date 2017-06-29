@@ -10,7 +10,8 @@ const MAPPER_ENTITY_TYPE = function() {
 };
 
 const MAPPER_RELATION_ROLE = function() {
-    Object.values(this.relation).forEach((relation) => {
+    Object.keys(this.relation).forEach((r) => {
+	var relation = this.relation[r];
         if (!('argument' in relation)) return;
 
         for (var arg of relation['argument']) {

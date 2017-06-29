@@ -3,15 +3,16 @@ load('collect.js');
 /** @const @private */
 const MAPPER_RELATION_ARGS = function() {
     var hasRelation = false;
-    Object.values(this.relation).forEach((relation) => {
+    Object.keys(this.relation).forEach((r) => {
+        var relation = this.relation[r];
         if (!('argument' in relation)) return;
 
         // Substrate, site, kinase
-        var roles = new Array(3).fill(null);
+        var roles = new Array(3).fill('null');
         for (var arg of relation['argument']) {
             var role = arg['role'];
             var duid = arg['entity_duid'];
-            var name = role + normalized ? isNormalized(this.entity, duid) : '';
+            var name = role + (normalized ? isNormalized(this.entity, duid) : '');
 
             if (role == 'SUBSTRATE')
                 roles[0] = name;
@@ -26,10 +27,10 @@ const MAPPER_RELATION_ARGS = function() {
                 return i == null;
             }))
             hasRelation = true;
-        emit(roles.join(', '), 1);
+        emit(roles.join(','), 1);
     });
 
-    if (hasRelation) emit(doc_count, 1);
+    if (hasRelation) emit('doc_count', 1);
 };
 
 var rlims = new Stat('rlims', 'raw');
