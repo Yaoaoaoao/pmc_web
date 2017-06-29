@@ -14,6 +14,9 @@ def get_section_list(db, collection, pmcid):
 def get_data(db, collection, key, value):
     return client[db][collection].find_one({key: value}, {'_id': 0})
 
+def run_query(db, collection, query):
+    return client[db][collection].find(query, {'_id': 0})
+
 def get_stat(db, collection, name):
     if name is None:
         collections = [c for c in client[db].collection_names() if c.startswith(collection+'.stat.')]
@@ -25,3 +28,4 @@ def get_stat(db, collection, name):
         cursor = client[db][collection]['stat'][name].find({})
         if cursor:
             return list(cursor)
+

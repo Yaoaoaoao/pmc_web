@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/latest/css/bootstrap.min.css">
+    <style>
+      .SUBSTRATE {color: #0d40c7; font-weight:bold;}
+      .KINASE {color: #219a06; font-weight:bold;}
+      .SITE {color: #c70d40; font-weight:bold;}
+      .SITEOTHER {color: #c70d40; font-weight:bold;}
+      .TRIGGER {font-weight:bold; text-decoration:underline;}
+      .MIRNA {color: #c70d40; font-weight:bold;}
+      .GENE {color: #0d40c7; font-weight:bold;}
+    </style>
+</head>
+<body>
+  <table class="table">
+  {% if db == "rlims" %}
+  <tr>
+    <th class="col-sm-1">PMID</th>
+    <th class="col-sm-1">Kinase</th>
+    <th class="col-sm-1">Substrate</th>
+    <th class="col-sm-1">Site</th>
+    <th>Sentence</th>
+  </tr>
+  {% elif db == "mirtex" %}
+  <tr>
+    <th class="col-sm-1">PMID</th>
+    <th class="col-sm-1">Relation</th>
+    <th class="col-sm-1">miRNA</th>
+    <th class="col-sm-1">Gene</th>
+    <th>Sentence</th>
+  </tr>
+  {% endif %}
+
+  {% for r in relations %}
+  {% if db == "rlims" %}
+  <tr>
+    <td>{{ r["docId"] }}</td>
+    <td>{{ r["kinase"] or '' }}</td>
+    <td>{{ r["substrate"] or '' }}</td>
+    <td>{{ r["site"] or '' }}</td>
+    <td>{{ r["sentence"] | safe }}</td>
+  </tr>
+  {% elif db == "mirtex" %}
+  <tr>
+    <td>{{ r["docId"] }}</td>
+    <td>{{ r["relationType"] }}</td>
+    <td>{{ r["mirna"] or '' }}</td>
+    <td>{{ r["gene"] or '' }}</td>
+    <td>{{ r["sentence"] | safe }}</td>
+  </tr>
+  {% endif %}
+  {% endfor %}
+  </table>
+</body>
+</html>
