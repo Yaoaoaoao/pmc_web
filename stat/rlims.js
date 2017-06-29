@@ -1,7 +1,7 @@
 load('collect.js');
 
 /** @const @private */
-const MAPPER_RELATION_ARGS = function() {
+const MAPPER_RELATION_ARGS = function () {
     for (var i in this.relation) {
         if ('argument' in this.relation[i]) {
             // Substrate, site, kinase
@@ -19,8 +19,8 @@ const MAPPER_RELATION_ARGS = function() {
             emit(roles, 1);
         }
     }
-}
+};
 
 var rlims = new Stat('rlims', 'raw');
-rlims.basicCounts();
-rlims.counter(MAPPER_RELATION_ARGS, 'relation_args');
+rlims.entityType();
+// rlims.counter(MAPPER_RELATION_ARGS, 'relation_args');
