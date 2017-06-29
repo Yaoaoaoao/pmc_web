@@ -7,7 +7,8 @@
     <script src="{{ url_for('static', filename='lib/react-dom.js') }}"></script>
     <script src="{{ url_for('static', filename='lib/babel.min.js') }}"></script>
     <!-- Bootstrap -->
-    <script src="{{ url_for('static', filename='lib/bootstrap.min.css') }}"></script>
+    <link rel="stylesheet" type="text/css"
+          href="{{ url_for('static', filename='lib/bootstrap.min.css') }}"/>
     <!-- Brat -->
     <link rel="stylesheet" type="text/css"
           href="{{ url_for('static', filename='style-vis.css') }}"/>
@@ -21,24 +22,28 @@
     <script src="{{ url_for('static', filename='cytoscape/style.js') }}"></script>
     <script src="{{ url_for('static', filename='cytoscape/cola.v3.min.js') }}"></script>
     <script src="{{ url_for('static', filename='cytoscape/cytoscape-cola.js') }}"></script>
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='cytoscape/web_style.css') }}"/>
-    <script> 
-        var db = '{{db}}', 
-            collection = '{{collection}}', 
-            key = '{{key}}',
-            value = '{{value}}';
+    <link rel="stylesheet" type="text/css"
+          href="{{ url_for('static', filename='cytoscape/web_style.css') }}"/>
+    <script>
+        var db = '{{db}}',
+                collection = '{{collection}}',
+                key = '{{key}}',
+                value = '{{value}}';
         var query = db + '/' + collection + '/' + key + '/' + value + '/';
     </script>
-    <script type="text/jsx" src="{{ url_for('static', filename='app.jsx') }}"></script>
+    <script type="text/jsx"
+            src="{{ url_for('static', filename='app.jsx') }}"></script>
 
 </head>
 <style>
     body {
         padding: 2% 5%;
     }
+
     .highlight {
         background-color: #f4da3f ! important;
     }
+
     .entity-label {
         color: #3f59f4;
         font-weight: bold;

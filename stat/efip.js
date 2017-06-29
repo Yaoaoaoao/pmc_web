@@ -2,16 +2,16 @@ load('collect.js');
 
 /** @const @private */
 const MAPPER_RELATION_ARGS = function() {
-    let hasRelation = false;
-    for (let relation of Object.values(this.relation)) {
+    var hasRelation = false;
+    Object.values(this.relation).forEach((relation) => {
         // Filters 
-        if (relation['relationType'] != 'IMPACT') break;
+        if (relation['relationType'] != 'IMPACT') return;
 
-        if (!('argument' in relation)) break;
+        if (!('argument' in relation)) return;
 
-        let direction;
-        if (!('attribute' in relation)) break;
-        for (let attr of relation['attribute']) {
+        var direction;
+        if (!('attribute' in relation)) return;
+        for (var attr of relation['attribute']) {
             if (attr['key'] == 'direction') {
                 direction = attr['value'];
                 break;
@@ -19,12 +19,12 @@ const MAPPER_RELATION_ARGS = function() {
         }
 
         // Substrate, site, kinase, interactant, direction
-        let roles = new Array(5).fill(null);
+        var roles = new Array(5).fill(null);
         roles[4] = direction;
-        for (let arg of relation['argument']) {
-            let role = arg['role'];
-            let duid = arg['entity_duid'];
-            let name = role + normalized ? isNormalized(this.entity, duid) : '';
+        for (var arg of relation['argument']) {
+            var role = arg['role'];
+            var duid = arg['entity_duid'];
+            var name = role + normalized ? isNormalized(this.entity, duid) : '';
 
             if (role == 'SUBSTRATE')
                 roles[0] = name;
@@ -50,18 +50,18 @@ const MAPPER_RELATION_ARGS = function() {
             }))
             hasRelation = true;
         emit(roles.join(', '), 1);
-    }
+    });
 
     if (hasRelation) emit(doc_count, 1);
 };
 
 
-let efip = new Stat('efip', 'raw');
+var efip = new Stat('efip', 'raw');
 efip.entityType();
 efip.relationRole();
 efip.relationArgs(MAPPER_RELATION_ARGS);
 
-let efip_norm = new Stat('efip', 'normalized', true);
+var efip_norm = new Stat('efip', 'normalized', true);
 efip_norm.entityType(true);
 efip_norm.relationRole(true);
 efip_norm.relationArgs(MAPPER_RELATION_ARGS);

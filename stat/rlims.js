@@ -2,16 +2,16 @@ load('collect.js');
 
 /** @const @private */
 const MAPPER_RELATION_ARGS = function() {
-    let hasRelation = false;
-    for (let relation of Object.values(this.relation)) {
-        if (!('argument' in relation)) break;
+    var hasRelation = false;
+    Object.values(this.relation).forEach((relation) => {
+        if (!('argument' in relation)) return;
 
         // Substrate, site, kinase
-        let roles = new Array(3).fill(null);
-        for (let arg of relation['argument']) {
-            let role = arg['role'];
-            let duid = arg['entity_duid'];
-            let name = role + normalized ? isNormalized(this.entity, duid) : '';
+        var roles = new Array(3).fill(null);
+        for (var arg of relation['argument']) {
+            var role = arg['role'];
+            var duid = arg['entity_duid'];
+            var name = role + normalized ? isNormalized(this.entity, duid) : '';
 
             if (role == 'SUBSTRATE')
                 roles[0] = name;
@@ -27,17 +27,17 @@ const MAPPER_RELATION_ARGS = function() {
             }))
             hasRelation = true;
         emit(roles.join(', '), 1);
-    }
+    });
 
     if (hasRelation) emit(doc_count, 1);
 };
 
-let rlims = new Stat('rlims', 'raw');
+var rlims = new Stat('rlims', 'raw');
 rlims.entityType();
 rlims.relationRole();
 rlims.relationArgs(MAPPER_RELATION_ARGS);
 
-let rlims_norm = new Stat('rlims', 'normalized', true);
+var rlims_norm = new Stat('rlims', 'normalized', true);
 rlims_norm.entityType(true);
 rlims_norm.relationRole(true);
 rlims_norm.relationArgs(MAPPER_RELATION_ARGS);

@@ -1,34 +1,32 @@
 load('map_reduce_func.js');
 
-class Stat {
-    /**
-     * Map reduce result will be saved under
-     * db.collection.stat.statTypeName[_normalized]
-     * @param {string} tool
-     * @param {string} collection
-     * @param {boolean|undefined} normalized_
-     */
-    constructor(tool, collection, normalized_) {
-        print(tool + '.' + collection);
-        this.collData = new Mongo().getDB(tool).getCollection(collection);
-        this.statCollName = collection + '.stat.';
-        this.normalized = normalized_;
-        this.suffix = normalized_ ? '_normalized' : '';
-    }
+/**
+ * Map reduce result will be saved under
+ * db.collection.stat.statTypeName[_normalized]
+ * @param {string} tool
+ * @param {string} collection
+ * @param {boolean|undefined} normalized_
+ * @constructor
+ */
+function Stat(tool, collection, normalized_) {
+    print(tool + '.' + collection);
+    this.collData = new Mongo().getDB(tool).getCollection(collection);
+    this.statCollName = collection + '.stat.';
+    this.normalized = normalized_;
+    this.suffix = normalized_ ? '_normalized' : '';
+}
 
-    entityType() {
+Stat.prototype = {
+    entityType: function() {
         this.counter(MAPPER_ENTITY_TYPE, 'entity_type');
-    }
-
-    relationRole() {
+    },
+    relationRole: function() {
         this.counter(MAPPER_RELATION_ROLE, 'relation_role');
-    }
-
-    relationArgs(mapper) {
+    },
+    relationArgs: function(mapper) {
         this.counter(mapper, 'relation_args');
-    }
-
-    mapReduce(mapper, reducer, outCollection) {
+    },
+    mapReduce: function(mapper, reducer, outCollection) {
         return this.collData.mapReduce(
             mapper, reducer, {
                 out: {replace: outCollection},
@@ -37,15 +35,14 @@ class Stat {
                     normalized: this.normalized
                 }
             });
-    }
-
+    },
     // Shortcut. 
-    counter(mapper, statType) {
+    counter: function(mapper, statType) {
         print('  -' + statType + this.suffix);
         var outColl = this.statCollName + statType + this.suffix;
         this.mapReduce(mapper, REDUCER_COUNT, outColl);
     }
-}
+};
 
 /**
  * Return "_normed" if the duid is normalized, otherwise null.
