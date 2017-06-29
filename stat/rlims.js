@@ -27,12 +27,12 @@ const MAPPER_RELATION_ARGS = function() {
 	emit({'name': 'doc_count'}, 1);
 };
 
-/*
+
 var rlims = new Stat('rlims', 'raw');
 rlims.entityType();
 rlims.relationRole();
 rlims.counter(MAPPER_RELATION_ARGS, 'relation_args');
-*/
+
 var rlims_norm = new Stat('rlims', 'normalized', true);
 rlims_norm.entityType(true);
 rlims_norm.relationRole(true);
