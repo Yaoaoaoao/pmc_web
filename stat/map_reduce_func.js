@@ -1,12 +1,14 @@
+// emit msg format: ({'name': key}, value)
+
 /** @const */
 var MAPPER_ENTITY_TYPE = function() {
     Object.keys(this.entity).forEach((duid) => {
 	var entityType = this.entity[duid].entityType;
         if (normalized) {
 	    var n = isNormalized(this.entity, duid);
-            emit(entityType + n, 1);
+            emit({'name': entityType + n}, 1);
 	}
-	emit(entityType, 1);
+	emit({'name': entityType}, 1);
     });
 };
 
@@ -19,9 +21,9 @@ var MAPPER_RELATION_ROLE = function() {
             var role = arg['role'];
 	    if (normalized) {
                 var n = isNormalized(this.entity, arg['entity_duid']);
-                emit(role + n, 1);
+                emit({'name': role + n}, 1);
 	    }
-            emit(role, 1);
+            emit({'name': role}, 1);
         });
     })
 };

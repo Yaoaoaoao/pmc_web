@@ -4,24 +4,27 @@ load('collect.js');
 const MAPPER_RELATION_ARGS = function() {
     var hasRelation = false;
     Object.keys(this.relation).forEach((i) => {
+	if (this.relation[i]['relationType'] != 'IMPACT')
+	    return;
+
         if (!('argument' in this.relation[i]))
             return;
 
-	var isDirectionPI = false;
+	var direction;
 	if (!('attribute' in this.relation[i]))
 	    return;
 	this.relation[i]['attribute'].forEach((attr) => {
-	    if (attr['key'] == 'direction' && attr['value'] == 'PI') {
-		isDirectionPI = true;
+	    if (attr['key'] == 'direction') {
+		direction = attr['value'];
 		return;
 	    }
 	});
-	if (!isDirectionPI) 
-	    return;
-	
-        // Substrate, site, kinase, interactant, ptm_trigger, ppi_trigger, impact_trigger
-        //var roles = Array(7).fill(null);
-	var roles = Array(4).fill(null);
+
+        // Substrate, site, kinase, interactant, ptm_trigger, ppi_trigger, impact_trigger, direction
+        //var roles = Array(7).fill(null)
+        // Substrate, site, kinase, interactant, direction
+	var roles = Array(5).fill(null);
+	roles[4] = direction;
 	this.relation[i]['argument'].forEach((arg) => {
             var role = arg['role'];
 	    var suffix = normalized ? isNormalized(this.entity, arg['entity_duid']) : '';
@@ -45,18 +48,18 @@ const MAPPER_RELATION_ARGS = function() {
 	// Check if roles are all null.
 	if (!hasRelation && !roles.every((i) => { return i == null; }))
 	    hasRelation = true;
-        emit(roles, 1);
+        emit({'name': roles}, 1);
     });
     if (hasRelation) 
-	emit('doc_count', 1);
+	emit({'name': 'doc_count'}, 1);
 };
 
-/*
+
 var efip = new Stat('efip', 'raw');
 efip.entityType();
 efip.relationRole();
 efip.counter(MAPPER_RELATION_ARGS, 'relation_args');
-*/
+
 var efip_norm = new Stat('efip', 'normalized', true);
 efip_norm.entityType(true);
 efip_norm.relationRole(true);

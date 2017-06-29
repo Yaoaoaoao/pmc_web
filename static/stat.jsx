@@ -21,19 +21,16 @@ class StatDataContainer extends React.Component {
         if (this.state.data == null) return (<p> Empty </p>);
         return (
             <div>
-                {this.state.data.map((item, idx) => (
+                {Object.keys(this.state.data).map((k, idx) => (
 		    <div key={idx}>
-			<p>{item.name}</p>
+			<p>{k}</p>
 			<pre>
-			<table><tbody>
-{/*			<tr><td><b>Total Count: </b></td>
-			    <td className="pull-right"><b>{item.data.counts.emit}</b></td></tr>
-			<tr><td><b>Types: </b></td>
-			    <td className="pull-right"><b>{item.data.counts.output}</b></td></tr>
-*/}
-			{item.data.results.map((cnt, idx) => (
-				<tr key={idx}><td>{JSON.stringify(cnt._id)}</td>
-					      <td className="pull-right">{cnt.value}</td></tr>	
+			<table><tbody> 
+			{this.state.data[k].map((item, idx) => (
+				<tr key={idx}>
+				    <td>{JSON.stringify(item._id.name)}</td>
+				    <td className="pull-right">{item.value}</td>
+				</tr>	
 			))}
 			</tbody></table>
 			</pre>

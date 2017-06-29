@@ -15,10 +15,13 @@ def get_data(db, collection, key, value):
     return client[db][collection].find_one({key: value}, {'_id': 0})
 
 def get_stat(db, collection, name):
-    fields = {'_id': 0, 'name': 1, 'data.counts': 1, 'data.results': 1}
     if name is None:
-        cursor = client[db][collection]['stat'].find({}, fields)
+        collections = [c for c in client[db].collection_names() if c.startswith(collection+'.stat.')]
+        rst = {}
+        for c in collections:
+            rst[c] = list(client[db][c].find())
+        return rst
+    else:
+        cursor = client[db][collection]['stat'][name].find({})
         if cursor:
             return list(cursor)
-    else: 
-        return client[db][collection]['stat'].find_one({'name': name}, fields)
