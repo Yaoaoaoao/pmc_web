@@ -23,4 +23,10 @@ const MAPPER_RELATION_ARGS = function () {
 
 var rlims = new Stat('rlims', 'raw');
 rlims.entityType();
+rlims.relationRole();
+// rlims.counter(MAPPER_RELATION_ARGS, 'relation_args');
+
+var rlims_norm = new Stat('rlims', 'normalized');
+rlims.entityType(true);
+rlims.relationRole(true);
 // rlims.counter(MAPPER_RELATION_ARGS, 'relation_args');

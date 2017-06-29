@@ -2,6 +2,8 @@ load('map_reduce_func.js');
 
 /**
  * A constructo function that initializes new Stat objects.
+ * If insert is called, map reduce result will be saved under db.collection.stat
+ * with given name.
  * @constructor
  */
 function Stat(tool, collection) {
@@ -12,28 +14,36 @@ function Stat(tool, collection) {
 }
 
 Stat.prototype = {
-    /**
-     * @param {boolean|undefined} normalized_: count normalized entity vs. 
-     * non-normalized.
-     */
     entityType: function (normalized_) {
-        this.counter(MAPPER_ENTITY_TYPE(normalized_), 'entity_type');
+        if (!normalized)
+            this.counter(MAPPER_ENTITY_TYPE, 'entity_type');
+        else
+            this.counter(MAPPER_ENTITY_TYPE_NORMALIZED, 'entity_type_normalized');
     },
-    relationRole: function () {
-        this.counter(MAPPER_RELATION_ROLE, 'relation_role');
+    relationRole: function (normalized_) {
+        if (!normalized)
+            this.counter(MAPPER_RELATION_ROLE, 'relation_role');
+        else
+            this.counter(MAPPER_RELATION_ROLE_NORMALIZED, 'relation_role_normalized');
     },
-    counter: function (mapper, statType) {
-        var name = this.prefix + statType;
-        var data = this.collData.mapReduce(
-            mapper,
-            REDUCER_COUNT,
+    mapReduce: function (mapper, reducer) {
+        return this.collData.mapReduce(
+            mapper, reducer,
             {out: {inline: 1}}
         );
+    },
+    insert: function (statType, data) {
+        var name = this.prefix + statType;
         this.collStat.insertOne({name: name, data: data});
+    },
+    // Shortcut. 
+    counter: function (mapper, statType) {
+        var data = this.mapReduce(mapper, REDUCER_COUNT);
+        this.insert(statType, data)
     }
 };
 
-// Return if the duid is normalized. 
+// Return "normalized" if the duid is normalized, otherwise null. 
 function isNormalized(entities, duid) {
-    return duid in entities && entities[duid]['entityId'].length > 0;
+    return duid in entities && entities[duid]['entityId'].length > 0 ? 'normalized' : null;
 }

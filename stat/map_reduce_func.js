@@ -1,27 +1,45 @@
 /** @const */
-var MAPPER_ENTITY_TYPE = function (normalized_) {
-    // If normalized_ == true, emit extra message to count normalized entity.
-    for (var duid in this.entity) {
+var MAPPER_ENTITY_TYPE = function () {
+    Object.keys(this.entity).forEach((duid) => {
+        emit(this.entity[duid].entityType, 1);
+    });
+};
+
+/** @const */
+var MAPPER_ENTITY_TYPE_NORMALIZED = function () {
+    Object.keys(this.entity).forEach((duid) => {
         var entityType = this.entity[duid].entityType;
-        if (normalized_) {
-            var n = isNormalized(this.entity, duid) ? 'normalized' : null ;
-            emit([entityType, n], 1);
-        }
+        var n = isNormalized(this.entity, duid);
+        emit([entityType, n], 1);
         emit(entityType, 1);
-    }
+    });
 };
 
 /** @const */
 var MAPPER_RELATION_ROLE = function () {
-    for (var i in this.relation) {
+    Object.keys(this.relation).forEach((i) => {
         if ('argument' in this.relation[i]) {
-            var args = this.relation[i]['argument'];
-            for (var a in args) {
-                var role = args[a]['role'];
+            Object.values(this.relation[i]['argument']).forEach((arg) => {
+                var role = arg['role'];
                 emit(role, 1);
-            }
+            });
         }
-    }
+    })
+};
+
+/** @const */
+var MAPPER_RELATION_ROLE_NORMALIZED = function () {
+    Object.keys(this.relation).forEach((i) => {
+        if ('argument' in this.relation[i]) {
+            Object.values(this.relation[i]['argument']).forEach((arg) => {
+                var role = arg['role'];
+                var duid = arg['entity_duid'];
+                var n = isNormalized(this.entity, duid);
+                emit([role, n], 1);
+                emit(role, 1);
+            });
+        }
+    })
 };
 
 /** @const */
