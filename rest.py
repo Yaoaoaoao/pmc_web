@@ -19,3 +19,7 @@ class MongoJson(Resource):
             return cyto.convert(data)
         else:
             return data
+
+class StatJson(Resource):
+    def get(self, db, collection, name=None):
+        return get_stat(db, collection, name)

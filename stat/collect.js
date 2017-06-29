@@ -5,9 +5,10 @@ load('map_reduce_func.js');
  * @constructor
  */
 function Stat(tool, collection) {
-    this.prefix = tool + '_' + collection + '_';
+    this.tool = tool;
+    this.collection = collection;
     this.collData = new Mongo().getDB(tool).getCollection(collection);
-    this.collStat = new Mongo().getDB(tool).getCollection('stat');
+    this.collStat = this.collData.getCollection('stat');
 }
 
 Stat.prototype = {
