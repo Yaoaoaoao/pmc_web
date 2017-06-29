@@ -14,3 +14,6 @@ def get_section_list(db, collection, pmcid):
 def get_data(db, collection, key, value):
     return client[db][collection].find_one({key: value}, {'_id': 0})
 
+
+def run_query(db, collection, query):
+    return client[db][collection].find(query, {'_id': 0})

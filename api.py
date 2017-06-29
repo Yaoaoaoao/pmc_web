@@ -24,8 +24,18 @@ def seclist(db, collection, pmcid):
                            data=get_sections(db, collection, pmcid))
 
 
+@app.route('/relation/<db>/<roles>/<query>/')
+def relation_view(db, roles, query):
+    roles = roles.strip().split(',')
+    query = {'$or': [{r:query} for r in roles]}
+    relations = run_query(db, 'relation', query)
+    relations.sort('score', -1).limit(200)
+    return render_template('relation.html', db=db, relations=relations)
+
+
+
 api.add_resource(MongoJson, '/<db>/<collection>/<key>/<value>/', 
                             '/<db>/<collection>/<key>/<value>/<format>/')
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=11000)
+    app.run(debug=True, host='0.0.0.0', port=11001)
