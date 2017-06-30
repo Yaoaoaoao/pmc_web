@@ -11,21 +11,18 @@ def get_section_list(db, collection, pmcid):
     return list(cursor)
 
 
-def get_data(db, collection, key, value):
-    return client[db][collection].find_one({key: value}, {'_id': 0})
-
 def run_query(db, collection, query):
     return client[db][collection].find(query, {'_id': 0})
 
+
 def get_stat(db, collection, name):
     if name is None:
-        collections = [c for c in client[db].collection_names() if c.startswith(collection+'.stat.')]
-        rst = {}
-        for c in collections:
-            rst[c] = list(client[db][c].find())
-        return rst
+        # Return all statistics in a dictionary.
+        # key is stat name, value is a list of {'_id': name, 'value': count}.
+        collections = [c for c in client[db].collection_names() if
+                       c.startswith(collection + '.stat.')]
+        return {c: list(client[db][c].find()) for c in collections}
     else:
         cursor = client[db][collection]['stat'][name].find({})
         if cursor:
             return list(cursor)
-

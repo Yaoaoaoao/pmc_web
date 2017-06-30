@@ -10,7 +10,7 @@ def get_sections(db, collection, pmcid):
 
 class MongoJson(Resource):
     def get(self, db, collection, key, value, format='json'):
-        data = get_data(db, collection, key, value)
+        data = run_query(db, collection, {key: value}).limit(1)
         if format == 'json':
             return data
         elif format == 'brat':
@@ -19,6 +19,7 @@ class MongoJson(Resource):
             return cyto.convert(data)
         else:
             return data
+
 
 class StatJson(Resource):
     def get(self, db, collection, name=None):
