@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- React -->
+    <script src="{{ url_for('static', filename='lib/react.js') }}"></script>
+    <script src="{{ url_for('static', filename='lib/react-dom.js') }}"></script>
+    <script src="{{ url_for('static', filename='lib/babel.min.js') }}"></script>
+    <!-- Bootstrap -->
+    <link rel="stylesheet" type="text/css"
+          href="{{ url_for('static', filename='lib/bootstrap.min.css') }}"/>
+    <script>
+        let url = 'http://biotm2.cis.udel.edu:11000/{{db}}/{{collection}}/{{key}}/{{value}}/';
+    </script>
+    <script src="{{ url_for('static', filename='utils.js') }}"></script>
+    <script type="text/jsx">
+      class RawDataContainer extends React.Component {
+    constructor(...args) {
+        super(...args);
+        this.state = {
+            data: null,
+            sections: []
+        };
+    }
+
+    componentDidMount() {
+        fetch(url).then(response => {
+            response.json().then(data => {
+                this.setState({
+                    data: data
+                });
+            });
+        });
+}
+    componentDidUpdate() {
+      if (this.state.sections.length==0 && this.state.data) {
+          var secs = textSection(this.state.data.text, this.state.data.entities, {});
+console.log(secs);
+          this.setState({
+              sections: secs
+          });                                                                                                                           
+      }
+    }
+
+    render() {
+        return (
+            <div>
+                <p>{this.state.sections.map((sec, idx) => {
+                    if (sec.isEntity) {
+                        return (
+                            <span key={idx} className='entity-label'>{sec.text}</span>
+                        )
+                    }
+                    else {
+                        return (
+                            <span key={idx}>{sec.text}</span>
+                        )
+                    }
+                })}
+                </p>
+            </div>
+        )
+    }
+}
+
+
+ReactDOM.render(
+    <RawDataContainer/>, document.getElementById('result')
+);
+</script>
+    <style>
+        body {
+            padding: 2% 5%;
+        }
+.entity-label {
+        color: #3f59f4;
+        font-weight: bold;
+        cursor: pointer;
+    }
+    </style>
+</head>
+<body>
+<div id="result"></div>
+</body>
+</html>

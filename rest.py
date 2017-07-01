@@ -10,7 +10,8 @@ def get_sections(db, collection, pmcid):
 
 class MongoJson(Resource):
     def get(self, db, collection, key, value, format='json'):
-        data = run_query(db, collection, {key: value}).limit(1)
+        data = run_query(db, collection, {key: value}).limit(1).next()
+        print data
         if format == 'json':
             return data
         elif format == 'brat':
