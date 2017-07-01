@@ -9,7 +9,7 @@
     <link rel="stylesheet" type="text/css"
           href="{{ url_for('static', filename='lib/bootstrap.min.css') }}"/>
     <script>
-        let url = 'http://biotm2.cis.udel.edu:11000/{{db}}/{{collection}}/{{key}}/{{value}}/';
+        let url = 'http://biotm2.cis.udel.edu:11000/searchData/{{db}}/{{collection}}/{{key}}/{{value}}/';
     </script>
     <script src="{{ url_for('static', filename='utils.js') }}"></script>
     <script type="text/jsx">
@@ -30,11 +30,33 @@
                 });
             });
         });
+      }
+    
+    render() {
+        if (this.state.data == null) return (<p> Empty </p>);
+        return (
+            <div>
+	    {this.state.data.map((relation, idx) => {
+	        return (<div>{idx+1} | {relation.docId} | {relation.duid} 
+		<Sentence key={idx} data={relation}/></div>)
+	    })}
+	    </div>
+        );
+      }
 }
-    componentDidUpdate() {
-      if (this.state.sections.length==0 && this.state.data) {
-          var secs = textSection(this.state.data.text, this.state.data.entities, {});
-console.log(secs);
+
+
+class Sentence extends React.Component {
+      constructor(...args) {
+        super(...args);
+        this.state = {
+            sections: []
+        };
+      }
+
+      componentDidMount() {
+      if (this.state.sections.length==0 && this.props.data) {
+          var secs = textSection(this.props.data.text, this.props.data.entities, {});
           this.setState({
               sections: secs
           });                                                                                                                           
@@ -43,8 +65,7 @@ console.log(secs);
 
     render() {
         return (
-            <div>
-                <p>{this.state.sections.map((sec, idx) => {
+          <p>{this.state.sections.map((sec, idx) => {
                     if (sec.isEntity) {
                         return (
                             <span key={idx} className='entity-label'>{sec.text}</span>
@@ -57,8 +78,7 @@ console.log(secs);
                     }
                 })}
                 </p>
-            </div>
-        )
+                )
     }
 }
 

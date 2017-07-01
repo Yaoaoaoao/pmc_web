@@ -37,7 +37,7 @@ class RawDataContainer extends React.Component {
         return (
             <div>
                 <div key={block.docId} className="container-fluid">
-                    <h3>{block.docId}</h3>
+                    <h3>{block.docId} <a href={"https://www.ncbi.nlm.nih.gov/pubmed/?term=" + block.docId} target="_blank"><small>Pubmed</small></a></h3>
                     <div className="row">
                     <div className="col-md-6">
                         <Cytoscape id="cy"

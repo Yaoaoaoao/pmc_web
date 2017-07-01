@@ -46,6 +46,7 @@ def test(db, collection, key, value):
 
 api.add_resource(MongoJson, '/<db>/<collection>/<key>/<value>/',
                  '/<db>/<collection>/<key>/<value>/<format>/')
+api.add_resource(SearchJson, '/searchData/<db>/<collection>/<key>/<value>/')
 api.add_resource(StatJson, '/statData/<db>/<collection>/',
                  '/statData/<db>/<collection>/<name>/')
 

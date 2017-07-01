@@ -21,6 +21,9 @@ class MongoJson(Resource):
         else:
             return data
 
+class SearchJson(Resource):
+    def get(self, db, collection, key, value):
+        return list(run_query(db, collection, {key: value}).limit(25))
 
 class StatJson(Resource):
     def get(self, db, collection, name=None):
