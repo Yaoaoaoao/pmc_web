@@ -180,7 +180,7 @@ class PMCText extends React.Component {
         let data = this.props.data;
         let text = this.props.data.text;
         
-        // Create entity: [rel1, rel2] mapping. 
+        // Create dictionary:  {entity: [rel1, rel2]}. 
         var entityRelation = {};
         Object.keys(data.entity).map((k) => { entityRelation[k] = []; });
         Object.values(data.relation).map((relation) => {
@@ -189,24 +189,8 @@ class PMCText extends React.Component {
             });
         });
         
-        var newSections = [];
-        var lastIndex = 0;
-        Object.values(data.entity).sort((a, b) => {
-            return a.charStart - b.charStart;
-        }).map((e) => {
-            newSections.push(
-                {text: text.slice(lastIndex, e.charStart), entity_label: false});
-            newSections.push(
-                {text: text.slice(e.charStart, e.charEnd + 1), entity_label: true,
-                 id: e.duid, relations: entityRelation[e.duid]});
-            lastIndex = e.charEnd + 1;
-        });
-        if (lastIndex <= text.length )
-            newSections.push(
-                {text: text.slice(lastIndex), entity_label: false});
-
         this.setState({
-            sections: newSections
+            sections: textSection(text, data.entity, entityRelation)
         });
     }
     
@@ -232,7 +216,7 @@ class PMCText extends React.Component {
         return (
             <div>
                 <p>{this.state.sections.map((sec, idx) => {
-                    if (sec.entity_label) {
+                    if (sec.isEntity) {
                         return (
                             <span key={idx}
                                   className={this.check_highlight(sec) ? 'entity-label highlight': 'entity-label'}
