@@ -3,24 +3,25 @@ function transform(doc) {
         var relation = doc.relation[r];
         if (!('argument' in relation)) return;
 
-        relation['docId'] = doc.docId;
-        relation['entities'] = [];
+        relation.docId = doc.docId;
+        relation._argument = [];
 
         var sentences = {};
-        relation['argument'].map((arg) => {
+        relation.argument.map((arg) => {
             var entity = doc.entity[arg.entity_duid];
-            entity['role'] = arg['role'];
-            relation['entities'].push(entity);
+            entity.role = arg.role;
+            relation._argument.push(entity);
             // Find sentence offset. 
             var sidx = entity.sentenceIndex;
             sentences[sidx] = doc.sentence[sidx];
         });
         
         delete relation.argument;
+	relation.argument = relation._argument;
         [paragraph, adjust] = adjustOffset(doc.text, sentences);
-        
-        relation['text'] = paragraph;
-        relation['entities'].map((e) => {
+
+        relation.text = paragraph;
+        relation.argument.map((e) => {
             e.charStart -= adjust[e.sentenceIndex].minus;
             e.charEnd -= adjust[e.sentenceIndex].minus;
         });
@@ -49,4 +50,5 @@ function adjustOffset(text, sentences) {
 
 
 var db = new Mongo().getDB('rlims');
+db.getCollection('test').drop()
 db.normalized.find().limit(100).forEach((item) => {transform(item)});
